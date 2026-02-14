@@ -433,6 +433,12 @@ function GrubSetup {
     fi
 }
 
+function FipsSetup {
+    err_exit "Attempting to enable FIPS mode in ${CHROOTMNT}..." NONE
+    chroot "${CHROOTMNT}" /bin/bash -c "fips-mode-setup --enable" || \
+      err_exit "Failed to enable FIPS mode"
+}
+
 # Configure SELinux
 function SELsetup {
     if [[ -d ${CHROOTMNT}/sys/fs/selinux ]]
