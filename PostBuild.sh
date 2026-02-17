@@ -411,7 +411,7 @@ function GrubSetup {
       err_exit "Failed writing default/grub file"
 
     # Install legacy BIOS GRUB2 boot-content
-    chroot "${CHROOTMNT}" /bin/bash -c "/sbin/grub2-install ${CHROOTDEV}"
+    chroot "${CHROOTMNT}" /bin/bash -c "/sbin/grub2-install --target=i386-pc ${CHROOTDEV}"
     GRUB_CFG="/boot/grub2/grub.cfg"
 
     # Install GRUB config-file
