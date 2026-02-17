@@ -155,19 +155,6 @@ function DoLvmMounts {
 
 }
 
-# mount /boot partition
-# TODO review if necessary
-function MountBootFSes {
-  # Create /boot mountpoint as needed
-  if [[ ! -d "${CHROOTMNT}/boot" ]]
-  then
-    mkdir "${CHROOTMNT}/boot"
-  fi
-
-  # Mount BIOS-boot partition
-  mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}3" "${CHROOTMNT}/boot"
-}
-
 # Create block/character-special files
 function PrepSpecialDevs {
     local    BINDDEV
@@ -376,8 +363,6 @@ then
 else
     DoLvmMounts
 fi
-
-MountBootFSes
 
 # Make block/character-special files
 PrepSpecialDevs
