@@ -139,6 +139,12 @@ function CreateFstab {
         fi
     done
 
+    # ensure /boot added to fstab
+   #  echo -e "LABEL=boot_disk  /boot  ${CHROOTFSTYP}  defaults  0 0" >> /etc/fstab
+    printf "LABEL=%s\t/boot\t%s\tdefaults\t 0 0\n" "boot_disk" \
+       "${CHROOTFSTYP}" >> "${CHROOTMNT}/etc/fstab" || \
+       err_exit "Failed setting up /etc/fstab"
+
     # Set an SELinux label
     if [[ -d ${CHROOTMNT}/sys/fs/selinux ]]
     then
