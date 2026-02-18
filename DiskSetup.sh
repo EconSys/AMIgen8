@@ -120,9 +120,9 @@ function CarveLVM_Standard {
     # Lay down the base partitions: BIOS GRUB, /boot, root Logical Volumes
     err_exit "Laying down new partition-table..." NONE
     parted -s "${CHROOTDEV}" -- mktable gpt \
-        mkpart primary 1MiB 17MiB \
-        mkpart primary "${FSTYPE}" 2048s "${BOOTBLKSZ}m" \
-        mkpart primary "${FSTYPE}" "${BOOTBLKSZ}m" 100% \
+        mkpart primary 2048s 17MiB \
+        mkpart primary "${FSTYPE}" 17MiB "${BOOTDEVSZ}MiB" \
+        mkpart primary "${FSTYPE}" "${BOOTDEVSZ}MiB" 100% \
         set 1 bios_grub on \
         set 3 lvm || \
           err_exit "Failed laying down new partition-table"
@@ -197,9 +197,9 @@ function CarveBare_Standard {
     # Lay down the base partitions
     err_exit "Laying down new partition-table..." NONE
     parted -s "${CHROOTDEV}" -- mklabel gpt \
-        mkpart primary 1MiB 17MiB \
-        mkpart primary "${FSTYPE}" 2048s "${BOOTBLKSZ}m" \
-        mkpart primary "${FSTYPE}" "${BOOTBLKSZ}m" 100% \
+        mkpart primary 2048s 17MiB \
+        mkpart primary "${FSTYPE}" 17MiB "${BOOTDEVSZ}MiB" \
+        mkpart primary "${FSTYPE}" "${BOOTDEVSZ}MiB" 100% \
         set 1 bios_grub on || \
       err_exit "Failed laying down new partition-table"
 
