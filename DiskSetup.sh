@@ -117,13 +117,14 @@ function CarveLVM_Standard {
     dd if=/dev/zero of="${CHROOTDEV}" bs=512 count=1000 > /dev/null 2>&1 || \
       err_exit "Failed clearing existing partition-tables"
 
-    # Lay down the base partitions
+    # Lay down the base partitions: BIOS GRUB, /boot, root Logical Volumes
     err_exit "Laying down new partition-table..." NONE
     parted -s "${CHROOTDEV}" -- mktable gpt \
+        mkpart primary 1MiB 17MiB \
         mkpart primary "${FSTYPE}" 2048s "${BOOTBLKSZ}m" \
         mkpart primary "${FSTYPE}" "${BOOTBLKSZ}m" 100% \
         set 1 bios_grub on \
-        set 2 lvm || \
+        set 3 lvm || \
           err_exit "Failed laying down new partition-table"
 
     ## Create LVM objects
@@ -133,14 +134,14 @@ function CarveLVM_Standard {
     then
         err_exit "Skipping explicit pvcreate operation... " NONE
     else
-        err_exit "Creating LVM2 PV ${CHROOTDEV}${PARTPRE:-}2..." NONE
-        pvcreate "${CHROOTDEV}${PARTPRE:-}2" || \
+        err_exit "Creating LVM2 PV ${CHROOTDEV}${PARTPRE:-}3..." NONE
+        pvcreate "${CHROOTDEV}${PARTPRE:-}3" || \
           err_exit "PV creation failed. Aborting!"
     fi
 
-    # Create root VolumeGroup
+    # Create root VolumeGroup on partition 3
     err_exit "Creating LVM2 volume-group ${VGNAME}..." NONE
-    vgcreate -y "${VGNAME}" "${CHROOTDEV}${PARTPRE:-}2" || \
+    vgcreate -y "${VGNAME}" "${CHROOTDEV}${PARTPRE:-}3" || \
       err_exit "VG creation failed. Aborting!"
 
     # Create LVM2 volume-objects by iterating ${PARTITIONARRAY}
@@ -196,24 +197,25 @@ function CarveBare_Standard {
     # Lay down the base partitions
     err_exit "Laying down new partition-table..." NONE
     parted -s "${CHROOTDEV}" -- mklabel gpt \
+        mkpart primary 1MiB 17MiB \
         mkpart primary "${FSTYPE}" 2048s "${BOOTBLKSZ}m" \
         mkpart primary "${FSTYPE}" "${BOOTBLKSZ}m" 100% \
         set 1 bios_grub on || \
       err_exit "Failed laying down new partition-table"
 
-    # Create / FS on partition 2
-    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}2..." NONE
+    # Create / FS on partition 3
+    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}3..." NONE
     mkfs -t "${FSTYPE}" "${MKFSFORCEOPT}" -L "${ROOTLABEL}" \
-        "${CHROOTDEV}${PARTPRE:-}2" || \
+        "${CHROOTDEV}${PARTPRE:-}3" || \
       err_exit "Failed creating filesystem - /"
 }
 
-# ensure /boot filestystem mounted and labeled
+# Create /boot filesystem
 function SetupBootParts {
-    # Create /boot FS on partition 1
-    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}1..." NONE
+    # Create /boot FS on partition 2
+    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}2..." NONE
     mkfs -t "${FSTYPE}" "${MKFSFORCEOPT}" -L "${LABEL_BOOT}" \
-         "${CHROOTDEV}${PARTPRE:-}1" || \
+         "${CHROOTDEV}${PARTPRE:-}2" || \
         err_exit "Failed creating filesystem - /boot"
 }
 

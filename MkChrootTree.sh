@@ -162,8 +162,8 @@ function MountBootFSes {
       mkdir "${CHROOTMNT}/boot"
     fi
 
-    # Mount BIOS-boot partition 1
-    mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}1" "${CHROOTMNT}/boot"
+    # Mount BIOS-boot partition 2
+    mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}2" "${CHROOTMNT}/boot"
 }
 
 # Create block/character-special files
@@ -356,19 +356,19 @@ fi
 # Ensure build-target mount-hierarchy is available
 ValidateTgtMnt
 
-## Mount partition(s) from second slice
+## Mount partition(s) from third slice
 # Locate LVM2 volume-group name
-read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}2" )"
+read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}3" )"
 
 
 # Do partition-mount if 'no-lvm' explicitly requested
 if [[ ${NOLVM:-} == "true" ]]
 then
-    mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}2" "${CHROOTMNT}"
+    mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}3" "${CHROOTMNT}"
 # Bail if not able to find a LVM2 vg-name
 elif [[ -z ${VGNAME:-} ]]
 then
-    err_exit "No LVM2 volume group found on ${CHROOTDEV}${PARTPRE}2 and" NONE
+    err_exit "No LVM2 volume group found on ${CHROOTDEV}${PARTPRE}3 and" NONE
     err_exit "The '--no-lvm' option not set. Aborting"
 # Attempt mount of LVM2 volumes
 else
