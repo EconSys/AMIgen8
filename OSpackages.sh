@@ -11,9 +11,8 @@ GRUBPKGS_X86=(
     efibootmgr
     grub2-efi-x64
     grub2-efi-x64-modules
-    grub2-pc
-    grub2-pc-modules
     grub2-tools
+    grub2-tools-extra
     grub2-tools-efi
     grub2-tools-minimal
     shim-x64
@@ -26,8 +25,8 @@ MINXTRAPKGS=(
     dracut-config-generic
     firewalld
     gdisk
-    grub2-pc-modules
     grub2-tools
+    grub2-tools-extra
     grub2-tools-minimal
     grubby
     kernel
