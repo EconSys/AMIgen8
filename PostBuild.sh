@@ -486,10 +486,6 @@ function GrubSetup {
             GRUB_CFG="/boot/efi/EFI/redhat/grub.cfg"
             ;;
       esac
-    else
-      # Install legacy GRUB2 boot-content
-      chroot "${CHROOTMNT}" /bin/bash -c "/sbin/grub2-install ${CHROOTDEV}"
-      GRUB_CFG="/boot/grub2/grub.cfg"
     fi
 
     # Install GRUB config-file
