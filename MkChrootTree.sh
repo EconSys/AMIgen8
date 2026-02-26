@@ -155,17 +155,8 @@ function DoLvmMounts {
 
 }
 
-# mount /boot and /boot/efi partitions
+# mount /boot/efi on partition 1
 function MountBootFSes {
-  # Create /boot mountpoint as needed
-  if [[ ! -d "${CHROOTMNT}/boot" ]]
-  then
-    mkdir "${CHROOTMNT}/boot"
-  fi
-
-  # Mount BIOS-boot partition
-  mount -t "${FSTYPE}" "${CHROOTDEV}${PARTPRE}3" "${CHROOTMNT}/boot"
-
   # Create /boot/efi mountpoint as needed
   if [[ ! -d "${CHROOTMNT}/boot/efi" ]]
   then
@@ -173,7 +164,7 @@ function MountBootFSes {
   fi
 
   # Mount UEFI-boot partition
-  mount -t vfat "${CHROOTDEV}${PARTPRE}2" "${CHROOTMNT}/boot/efi"
+  mount -t vfat "${CHROOTDEV}${PARTPRE}" "${CHROOTMNT}/boot/efi"
 }
 
 # Create block/character-special files
@@ -369,10 +360,7 @@ ValidateTgtMnt
 ## Mount partition(s) from second slice
 if [[ -d /sys/firmware/efi ]]
 then
-    # Locate LVM2 volume-group name (EFI)
-    read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}4" )"
-else
-    # Locate LVM2 volume-group name (no EFI)
+    # Locate LVM2 volume-group name
     read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}2" )"
 fi
 
@@ -390,7 +378,7 @@ else
     DoLvmMounts
 fi
 
-# Mount BIOS and UEFI boot-devices as needed
+# Mount UEFI boot-devices as needed
 if [[ -d /sys/firmware/efi ]]
 then
     MountBootFSes
