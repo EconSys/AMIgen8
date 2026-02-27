@@ -5,13 +5,10 @@ set -eu -o pipefail
 #
 #################################################################
 PROGNAME=$(basename "$0")
-BOOTDEVSZMIN="1024"
-BOOTDEVSZ="${BOOTDEVSZ:-${BOOTDEVSZMIN}}"
 UEFIDEVSZ="${UEFIDEVSZ:-100}"
 CHROOTDEV="${CHROOTDEV:-UNDEF}"
 DEBUG="${DEBUG:-UNDEF}"
 FSTYPE="${FSTYPE:-xfs}"
-LABEL_BOOT="${LABEL_BOOT:-boot_disk}"
 LABEL_UEFI="${LABEL_UEFI:-UEFI_DISK}"
 
 # Make interactive-execution more-verbose unless explicitly told not to
@@ -228,36 +225,6 @@ eval set -- "${OPTIONBUFR}"
 while true
 do
     case "$1" in
-        -b|--bootprt-size)
-              case "$2" in
-                "")
-                    err_exit "Error: option required but not specified"
-                    shift 2;
-                    exit 1
-                    ;;
-                *)
-                    BOOTDEVSZ=${2}
-                    if [[ ${BOOTDEVSZ} -lt ${BOOTDEVSZMIN} ]]
-                    then
-                      err_exit "Requested size for '/boot' filesystem is too small" 1
-                    fi
-                    shift 2;
-                    ;;
-              esac
-              ;;
-        -B|--bootblk-size)
-              case "$2" in
-                "")
-                    err_exit "Error: option required but not specified"
-                    shift 2;
-                    exit 1
-                    ;;
-                *)
-                    BOOTBLKSZ=${2}
-                    shift 2;
-                    ;;
-              esac
-              ;;
         -d|--disk)
               case "$2" in
                 "")
@@ -298,19 +265,6 @@ do
         -h|--help)
               UsageMsg 0
               ;;
-        -l|--label-boot)
-          case "$2" in
-            "")
-              err_exit "Error: option required but not specified"
-              shift 2;
-              exit 1
-              ;;
-            *)
-              LABEL_BOOT=${2}
-              shift 2;
-              ;;
-          esac
-          ;;
         -L|--label-uefi)
           case "$2" in
             "")
