@@ -151,7 +151,7 @@ function CreateFstab {
       UEFI_LABEL="$(
         fatlabel "${UEFI_PART//:*/}" | tail -1
       )"
-      printf 'LABEL=%s\t/boot/efi\tvfat\tdefaults,rw\t0 0\n' "${UEFI_LABEL}" >> \
+      printf 'LABEL=%s\t/boot/efi\tvfat\tumask=0077,shortname=winnt\t0 2\n' "${UEFI_LABEL}" >> \
         "${CHROOTMNT}/etc/fstab" || \
         err_exit "Failed adding '/boot/efi' to /etc/fstab"
     fi
