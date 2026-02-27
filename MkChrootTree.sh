@@ -160,11 +160,11 @@ function MountBootFSes {
   # Create /boot/efi mountpoint as needed
   if [[ ! -d "${CHROOTMNT}/boot/efi" ]]
   then
-    mkdir "${CHROOTMNT}/boot/efi"
+    mkdir -p "${CHROOTMNT}/boot/efi"
   fi
 
   # Mount UEFI-boot partition
-  mount -t vfat -o umask=0077,shortname=winnt "${CHROOTDEV}${PARTPRE}" "${CHROOTMNT}/boot/efi"
+  mount -t vfat -o umask=0077,shortname=winnt "${CHROOTDEV}${PARTPRE}1" "${CHROOTMNT}/boot/efi"
 }
 
 # Create block/character-special files
