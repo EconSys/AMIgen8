@@ -358,11 +358,10 @@ fi
 ValidateTgtMnt
 
 ## Mount partition(s) from second slice
-if [[ -d /sys/firmware/efi ]]
-then
-    # Locate LVM2 volume-group name
-    read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}2" )"
-fi
+[[ -d /sys/firmware/efi ]] || err_exit "UEFI firmware required"
+
+# Locate LVM2 volume-group name
+read -r VGNAME <<< "$( pvs --noheading -o vg_name "${CHROOTDEV}${PARTPRE}2" )"
 
 # Do partition-mount if 'no-lvm' explicitly requested
 if [[ ${NOLVM:-} == "true" ]]
@@ -378,11 +377,7 @@ else
     DoLvmMounts
 fi
 
-# Mount UEFI boot-devices as needed
-if [[ -d /sys/firmware/efi ]]
-then
-    MountBootFSes
-fi
+MountBootFSes
 
 # Make block/character-special files
 PrepSpecialDevs
