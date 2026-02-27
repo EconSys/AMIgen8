@@ -164,7 +164,7 @@ function MountBootFSes {
   fi
 
   # Mount UEFI-boot partition
-  mount -t vfat "${CHROOTDEV}${PARTPRE}" "${CHROOTMNT}/boot/efi"
+  mount -t vfat -o umask=0077,shortname=winnt "${CHROOTDEV}${PARTPRE}" "${CHROOTMNT}/boot/efi"
 }
 
 # Create block/character-special files

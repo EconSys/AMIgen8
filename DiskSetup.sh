@@ -208,7 +208,7 @@ function CarveBare_Efi {
   function SetupBootParts_Efi {
     # Make filesystem for /boot/efi on partition 1
     err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}1..." NONE
-    mkfs -t vfat -n "${LABEL_UEFI}" "${CHROOTDEV}${PARTPRE:-}1" || \
+    mkfs.vfat -F 32 -n "${LABEL_UEFI}" "${CHROOTDEV}${PARTPRE:-}1" || \
       err_exit "Failed creating filesystem"
 }
 
