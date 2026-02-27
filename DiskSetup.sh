@@ -125,23 +125,18 @@ function CarveLVM_Efi {
 
     # Lay down the base partitions
     err_exit "Laying down new partition-table..." NONE
-    parted -s "${CHROOTDEV}" -- mktable gpt \
-      mkpart primary "${FSTYPE}" 1049k 2m \
-      mkpart primary fat16 4096s $(( 2 + UEFIDEVSZ ))m \
-      mkpart primary xfs $((
-        2 + UEFIDEVSZ ))m $(( ( 2 + UEFIDEVSZ ) + BOOTDEVSZ
-      ))m \
-      mkpart primary xfs $(( ( 2 + UEFIDEVSZ ) + BOOTDEVSZ ))m 100% \
-      set 1 bios_grub on \
-      set 2 esp on \
-      set 4 lvm on || \
+    parted -s "${CHROOTDEV}" -- mklabel gpt \
+      mkpart primary fat32 1MiB $(( UEFIDEVSZ + 1 ))MiB \
+      mkpart primary "${FSTYPE}" $(( UEFIDEVSZ + 1 ))MiB 100% \
+      set 1 esp on \
+      set 2 lvm on || \
         err_exit "Failed laying down new partition-table"
 
     ## Create LVM objects
 
-    # Create root VolumeGroup
+    # Create root VolumeGroup on partition 2
     err_exit "Creating LVM2 volume-group ${VGNAME}..." NONE
-    vgcreate -y "${VGNAME}" "${CHROOTDEV}${PARTPRE:-}4" || \
+    vgcreate -y "${VGNAME}" "${CHROOTDEV}${PARTPRE:-}2" || \
       err_exit "VG creation failed. Aborting!"
 
     # Create LVM2 volume-objects by iterating ${PARTITIONARRAY}
@@ -198,34 +193,22 @@ function CarveBare_Efi {
     # Lay down the base partitions
     err_exit "Laying down new partition-table..." NONE
     parted -s "${CHROOTDEV}" -- mklabel gpt \
-      mkpart primary "${FSTYPE}" 1049k 2m \
-      mkpart primary fat16 4096s $(( 2 + UEFIDEVSZ ))m \
-      mkpart primary xfs $((
-        2 + UEFIDEVSZ ))m $(( ( 2 + UEFIDEVSZ ) + BOOTDEVSZ
-      ))m \
-      mkpart primary xfs $(( ( 2 + UEFIDEVSZ ) + BOOTDEVSZ ))m 100% \
-      set 1 bios_grub on \
-      set 2 esp on || \
-      err_exit "Failed laying down new partition-table"
+      mkpart primary fat32 1MiB $(( UEFIDEVSZ + 1 ))MiB \
+      mkpart primary "${FSTYPE}" $(( UEFIDEVSZ + 1 ))MiB 100% \
+      set 1 esp on || \
+        err_exit "Failed laying down new partition-table"
 
-    # Create FS on partitions
-    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}4..." NONE
+    # Create FS on partition 2
+    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}2..." NONE
     mkfs -t "${FSTYPE}" "${MKFSFORCEOPT}" -L "${ROOTLABEL}" \
-      "${CHROOTDEV}${PARTPRE:-}4" || \
+      "${CHROOTDEV}${PARTPRE:-}2" || \
       err_exit "Failed creating filesystem"
   }
 
   function SetupBootParts_Efi {
-
-    # Make filesystem for /boot/efi
-    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}2..." NONE
-    mkfs -t vfat -n "${LABEL_UEFI}" "${CHROOTDEV}${PARTPRE:-}2" || \
-      err_exit "Failed creating filesystem"
-
-    # Make filesystem for /boot
-    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}3..." NONE
-    mkfs -t "${FSTYPE}" "${MKFSFORCEOPT}" -L "${LABEL_BOOT}" \
-      "${CHROOTDEV}${PARTPRE:-}3" || \
+    # Make filesystem for /boot/efi on partition 1
+    err_exit "Creating filesystem on ${CHROOTDEV}${PARTPRE:-}1..." NONE
+    mkfs -t vfat -n "${LABEL_UEFI}" "${CHROOTDEV}${PARTPRE:-}1" || \
       err_exit "Failed creating filesystem"
 }
 
