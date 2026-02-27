@@ -263,9 +263,6 @@ function PrepChroot {
     rpm --force --root "${CHROOTMNT}" -ivh --nodeps --nopre /tmp/*.rpm || \
       err_exit "Failed installing staged RPMs"
 
-    # Try to keep the yum RPM's reinstall from barfing on Azure
-    AzureYumPluginDirCollision
-
     # Install dependences for base RPMs
     err_exit "Installing base RPM's dependences..." NONE
     yum --disablerepo="*" --enablerepo="${OSREPOS}" \
