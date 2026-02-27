@@ -52,12 +52,9 @@ function UsageMsg {
     (
         echo "Usage: ${0} [GNU long option] [option] ..."
         echo "  Options:"
-        printf '\t%-4s%s\n' '-b' 'Size of /boot partition (default/minimum: 1024MiB)'
-        printf '\t%-4s%s\n' '-B' 'Boot-block size (default: 16MiB)'
         printf '\t%-4s%s\n' '-d' 'Base dev-node used for build-device'
         printf '\t%-4s%s\n' '-f' 'Filesystem-type used for root filesystems (default: xfs)'
         printf '\t%-4s%s\n' '-h' 'Print this message'
-        printf '\t%-4s%s\n' '-l' 'Filesystem label for /boot partition (default: boot_disk)'
         printf '\t%-4s%s\n' '-L' 'Filesystem label for /boot/efi partition (default: UEFI_DISK)'
         printf '\t%-4s%s\n' '-p' 'Comma-delimited string of colon-delimited partition-specs'
         printf '\t%-6s%s\n' '' 'Default layout:'
@@ -72,12 +69,9 @@ function UsageMsg {
         printf '\t%-4s%s\n' '-U' 'Size of /boot/efi partition (default: 100MiB)'
         printf '\t%-4s%s\n' '-v' 'Name assigned to root volume-group (default: VolGroup00)'
         echo "  GNU long options:"
-        printf '\t%-20s%s\n' '--bootprt-size' 'See "-b" short-option'
-        printf '\t%-20s%s\n' '--bootblk-size' 'See "-B" short-option'
         printf '\t%-20s%s\n' '--disk' 'See "-d" short-option'
         printf '\t%-20s%s\n' '--fstype' 'See "-f" short-option'
         printf '\t%-20s%s\n' '--help' 'See "-h" short-option'
-        printf '\t%-20s%s\n' '--label-boot' 'See "-l" short-option'
         printf '\t%-20s%s\n' '--label-uefi' 'See "-L" short-option'
         printf '\t%-20s%s\n' '--partition-string' 'See "-p" short-option'
         printf '\t%-20s%s\n' '--rootlabel' 'See "-r" short-option'
